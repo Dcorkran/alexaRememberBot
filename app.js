@@ -1,46 +1,55 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+'use strict';
+var Alexa = require('alexa-sdk');
+var APP_ID = undefined;  // TODO replace with your app ID (OPTIONAL).
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+var languageStrings = {
+    "en": {
+        "translation": {
+            "SKILL_NAME" : "Remember Bot",
+            "GET_NAME_MESSAGE" : "Here's what I remember: ",
+            "HELP_MESSAGE" : "You can say tell me a space fact, or, you can say exit... What can I help you with?",
+            "HELP_REPROMPT" : "What can I help you with?",
+            "STOP_MESSAGE" : "Goodbye!"
+        }
+    }
+};
 
-var app = express();
+exports.handler = function(event, context, callback) {
+    var alexa = Alexa.handler(event, context);
+    alexa.APP_ID = APP_ID;
+    // To enable string internationalization (i18n) features, set a resources object.
+    alexa.resources = languageStrings;
+    alexa.registerHandlers(handlers);
+    alexa.execute();
+};
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+var handlers = {
+    'LaunchRequest': function () {
+        this.emit('GetName');
+    },
+    'GetNameIntent': function () {
+        this.emit('GetName');
+    },
+    'GetName': function () {
+        // Get a random space fact from the space facts list
+        // Use this.t() to get corresponding language data
+        // var factArr = this.t('FACTS');
+        // var factIndex = Math.floor(Math.random() * factArr.length);
+        // var randomFact = factArr[factIndex];
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', index);
-app.use('/users', users);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
-
-module.exports = app;
+        // Create speech output
+        var speechOutput = this.t("GET_NAME_MESSAGE") + 'name test';
+        this.emit(':tellWithCard', speechOutput, this.t("SKILL_NAME"), 'test success')
+    },
+    'AMAZON.HelpIntent': function () {
+        var speechOutput = this.t("HELP_MESSAGE");
+        var reprompt = this.t("HELP_MESSAGE");
+        this.emit(':ask', speechOutput, reprompt);
+    },
+    'AMAZON.CancelIntent': function () {
+        this.emit(':tell', this.t("STOP_MESSAGE"));
+    },
+    'AMAZON.StopIntent': function () {
+        this.emit(':tell', this.t("STOP_MESSAGE"));
+    }
+};
