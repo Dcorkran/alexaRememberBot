@@ -23,20 +23,13 @@ var handlers = {
     },
     'GetName': function () {
         let name = this.event.request.intent.slots.Name.value;
-        // Get a random space fact from the space facts list
-        // Use this.t() to get corresponding language data
-        // var factArr = this.t('FACTS');
-        // var factIndex = Math.floor(Math.random() * factArr.length);
-        // var randomFact = factArr[factIndex];
+        console.log(this.event.request.intent.slots.Name);
         return http_calls.getName(name)
         .then((description)=>{
           let emitDescription = description.data[0].description;
           console.log(emitDescription);
           this.emit(':tell', emitDescription)
         })
-        // Create speech output
-        // var speechOutput = GET_NAME_MESSAGE + 'name test';
-
         // this.emit(':tellWithCard', speechOutput, this.t("SKILL_NAME"), 'test success')
     },
     'AMAZON.HelpIntent': function () {
