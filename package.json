@@ -4,6 +4,7 @@
   "private": true,
   "main": "app.js",
   "dependencies": {
-    "alexa-sdk": "^1.0.8"
+    "alexa-sdk": "^1.0.8",
+    "axios": "^0.16.1"
   }
 }

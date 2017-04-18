@@ -1,5 +1,6 @@
 'use strict';
 var Alexa = require('alexa-sdk');
+var http_calls = require('./httpCalls');
 var APP_ID = undefined;  // TODO replace with your app ID (OPTIONAL).
 
 
@@ -26,10 +27,13 @@ var handlers = {
         // var factArr = this.t('FACTS');
         // var factIndex = Math.floor(Math.random() * factArr.length);
         // var randomFact = factArr[factIndex];
-
+        http_calls.getName('Dillon')
+        .then((description)=>{
+          this.emit(':tell', name)
+        })
         // Create speech output
         // var speechOutput = GET_NAME_MESSAGE + 'name test';
-        this.emit(':tell', RESPONSE_TEST)
+
         // this.emit(':tellWithCard', speechOutput, this.t("SKILL_NAME"), 'test success')
     },
     'AMAZON.HelpIntent': function () {
