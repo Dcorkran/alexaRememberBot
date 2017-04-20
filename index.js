@@ -14,10 +14,6 @@ exports.handler = function(event, context, callback) {
 const RESPONSE_TEST = 'Hello!!!';
 const GET_NAME_MESSAGE = "Here's what I remember: ";
 
-var states = {
-  name: '';
-}
-
 var handlers = {
     'LaunchRequest': function () {
         this.emit('GetName');
@@ -41,12 +37,14 @@ var handlers = {
         // this.emit(':tellWithCard', speechOutput, this.t("SKILL_NAME"), 'test success')
     },
     'UpdateNameIntent': function () {
+      console.log('hit');
+      console.log(this.event.request.intent.slots.Name.value);
         let name = this.event.request.intent.slots.Name.value;
-        this.emit(':ask','Okay. What would you like me to remember about ' + name + '? Please limit your description to one sentence.');
+        this.emit(':ask',`Okay. What would you like me to remember about ${name}? Please limit your description to one sentence.`,`Okay. What would you like me to remember about ${name}? Please limit your description to one sentence.`);
     },
     'DescriptionNameIntent': function () {
         let name = this.event.request.intent.slots.Name.value;
-        this.emit(':ask','Okay. What would you like me to remember about ' + name + '? Please limit your description to one sentence.');
+        this.emit(':tell','working');
     },
     'AMAZON.HelpIntent': function () {
         var speechOutput = this.t("HELP_MESSAGE");
