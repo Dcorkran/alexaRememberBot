@@ -5,12 +5,11 @@ module.exports = {
     console.log('hit');
     return axios.get(`https://alexa-remember-bot.herokuapp.com/${name}`)
   }
-  // postName:function(name){
+  // postName:function(description){
   //   return axios.post(`https://alexa-remember-bot.herokuapp.com/`,
   //   {
   //     name,
   //     description
   //   })
-  // },
-
+  // }
 }
