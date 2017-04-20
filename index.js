@@ -11,8 +11,12 @@ exports.handler = function(event, context, callback) {
     alexa.execute();
 };
 
-var RESPONSE_TEST = 'Hello!!!';
-var GET_NAME_MESSAGE = "Here's what I remember: ";
+const RESPONSE_TEST = 'Hello!!!';
+const GET_NAME_MESSAGE = "Here's what I remember: ";
+
+var states = {
+  name: '';
+}
 
 var handlers = {
     'LaunchRequest': function () {
@@ -26,11 +30,23 @@ var handlers = {
         console.log(this.event.request.intent.slots.Name);
         return http_calls.getName(name)
         .then((description)=>{
-          let emitDescription = description.data[0].description;
-          console.log(emitDescription);
-          this.emit(':tell', emitDescription)
+          if (description.data.length === 0) {
+            this.emit(':tell', `I don't have any information about ${name}. You can say, remember bot, remember something about ${name}, and I will remember it for next time.`)
+          } else {
+            let emitDescription = description.data[0].description;
+            console.log(emitDescription);
+            this.emit(':tell', emitDescription)
+          }
         })
         // this.emit(':tellWithCard', speechOutput, this.t("SKILL_NAME"), 'test success')
+    },
+    'UpdateNameIntent': function () {
+        let name = this.event.request.intent.slots.Name.value;
+        this.emit(':ask','Okay. What would you like me to remember about ' + name + '? Please limit your description to one sentence.');
+    },
+    'DescriptionNameIntent': function () {
+        let name = this.event.request.intent.slots.Name.value;
+        this.emit(':ask','Okay. What would you like me to remember about ' + name + '? Please limit your description to one sentence.');
     },
     'AMAZON.HelpIntent': function () {
         var speechOutput = this.t("HELP_MESSAGE");
