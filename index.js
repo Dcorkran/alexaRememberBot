@@ -23,9 +23,9 @@ var handlers = {
     },
     'GetNameIntent': function () {
         this.emit('GetName');
-        Object.assign(this.attributes, {
-            nameToUpdate: ''
-        });
+        // Object.assign(this.attributes, {
+        //     nameToUpdate: ''
+        // });
     },
     'GetName': function () {
         let name = this.event.request.intent.slots.Name.value;
@@ -53,9 +53,10 @@ var handlers = {
         this.emit(':ask',`Okay. What would you like me to remember about ${name}? Please limit your description to one sentence.`,`Okay. What would you like me to remember about ${name}? Please limit your description to one sentence.`);
     },
     'DescriptionNameIntent': function () {
-        console.log(this.attributes.nameToUpdate);
+        let name = this.attributes.nameToUpdate;
         let description = this.event.request.intent.slots.DescriptionText.value;
         console.log(description);
+        return http_calls.postName(name, description)
         this.emit(':tell','working');
     },
     'AMAZON.HelpIntent': function () {
