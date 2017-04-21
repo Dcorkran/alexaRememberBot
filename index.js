@@ -57,7 +57,10 @@ var handlers = {
         let description = this.event.request.intent.slots.DescriptionText.value;
         console.log(description);
         return http_calls.postName(name, description)
-        this.emit(':tell','working');
+        .then((data)=>{
+          this.emit(':tell',`Okay, here is what I remember about ${name}: ${description}`);
+        })
+
     },
     'AMAZON.HelpIntent': function () {
         var speechOutput = this.t("HELP_MESSAGE");
