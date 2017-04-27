@@ -13,6 +13,8 @@ exports.handler = function(event, context, callback) {
 
 const RESPONSE_TEST = 'Hello!!!';
 const GET_NAME_MESSAGE = "Here's what I remember: ";
+const HELP_MESSAGE = `I'm Helping`;
+const STOP_MESSAGE = `Goodbye.`;
 
 var handlers = {
     'LaunchRequest': function () {
@@ -53,24 +55,27 @@ var handlers = {
         this.emit(':ask',`Okay. What would you like me to remember about ${name}? Please limit your description to one sentence.`,`Okay. What would you like me to remember about ${name}? Please limit your description to one sentence.`);
     },
     'DescriptionNameIntent': function () {
-        let name = this.attributes.nameToUpdate;
-        let description = this.event.request.intent.slots.DescriptionText.value;
-        console.log(description);
-        return http_calls.postName(name, description)
-        .then((data)=>{
-          this.emit(':tell',`Okay, here is what I remember about ${name}: ${description}`);
-        })
-
+        if (!this.attributes.nameToUpdate) {
+          this.emit(':tell',`I'm sorry. I don't understand what you mean. Here are some example phrases. Remember bot, what do you know about Dillon. Or, remember bot, remember something about James`);
+        } else {
+          let name = this.attributes.nameToUpdate;
+          let description = this.event.request.intent.slots.DescriptionText.value;
+          console.log(description);
+          return http_calls.postName(name, description)
+          .then((data)=>{
+            this.emit(':tell',`Okay, here is what I remember about ${name}: ${description}`);
+          })
+        }
     },
     'AMAZON.HelpIntent': function () {
-        var speechOutput = this.t("HELP_MESSAGE");
-        var reprompt = this.t("HELP_MESSAGE");
+        var speechOutput = HELP_MESSAGE;
+        var reprompt = HELP_MESSAGE;
         this.emit(':ask', speechOutput, reprompt);
     },
     'AMAZON.CancelIntent': function () {
-        this.emit(':tell', this.t("STOP_MESSAGE"));
+        this.emit(':tell', STOP_MESSAGE);
     },
     'AMAZON.StopIntent': function () {
-        this.emit(':tell', this.t("STOP_MESSAGE"));
+        this.emit(':tell', STOP_MESSAGE);
     }
 };
